@@ -10,6 +10,7 @@ output:
 library("tidyverse")
 library("dplyr")
 library("tidyr")
+library("readr")
 
 survey <- read_csv("https://raw.githubusercontent.com/introdsci/MusicSurvey/master/music-survey.csv")
 preferences <- read_csv("https://raw.githubusercontent.com/introdsci/MusicSurvey/master/preferences-survey.csv")
@@ -47,5 +48,10 @@ colnames(survey)
 Person <- tibble(time_submitted = survey$time_submitted, pseudonym = survey$pseudonym, sex = survey$sex, academic_major = survey$academic_major, academic_level = survey$academic_level, year_born = survey$year_born)
 
 FavoriteSong <- tibble(pseudonym = survey$pseudonym, artist = survey$favorite_song_artist, song = survey$favorite_song, link = survey$favorite_song_link)
+```
+
+
+```{r}
+Person$time_submitted <- as.POSIXlt(parse_datetime(Person$time_submitted, format="%m/%d/%y %H:%M"))
 ```
 

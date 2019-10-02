@@ -1639,7 +1639,6 @@ summary {
 </div>
 
 
-<p>First, we need tidyverse to handle data importing and wrangling…</p>
 <pre class="r"><code>library(&quot;tidyverse&quot;)</code></pre>
 <pre><code>## ── Attaching packages ──────────────────────────────────────────────────────────── tidyverse 1.2.1 ──</code></pre>
 <pre><code>## ✔ ggplot2 3.2.1     ✔ purrr   0.3.2
@@ -1649,7 +1648,10 @@ summary {
 <pre><code>## ── Conflicts ─────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
 ## ✖ dplyr::filter() masks stats::filter()
 ## ✖ dplyr::lag()    masks stats::lag()</code></pre>
-<pre class="r"><code>survey &lt;- read_csv(&quot;https://raw.githubusercontent.com/introdsci/MusicSurvey/master/music-survey.csv&quot;)</code></pre>
+<pre class="r"><code>library(&quot;dplyr&quot;)
+library(&quot;tidyr&quot;)
+
+survey &lt;- read_csv(&quot;https://raw.githubusercontent.com/introdsci/MusicSurvey/master/music-survey.csv&quot;)</code></pre>
 <pre><code>## Parsed with column specification:
 ## cols(
 ##   Timestamp = col_character(),
@@ -1672,23 +1674,7 @@ summary {
 ##   `What was your pseudonym?` = col_character()
 ## )</code></pre>
 <pre><code>## See spec(...) for full column specifications.</code></pre>
-<p>Number of Rows:</p>
-<pre class="r"><code>nrow(survey)</code></pre>
-<pre><code>## [1] 44</code></pre>
-<p>Column Names:</p>
-<pre class="r"><code>colnames(survey)</code></pre>
-<pre><code>##  [1] &quot;Timestamp&quot;                                                                                                                                  
-##  [2] &quot;First, we are going to create a pseudonym for you to keep this survey anonymous (more or less). Which pseudonym generator would you prefer?&quot;
-##  [3] &quot;What is your pseudonym?&quot;                                                                                                                    
-##  [4] &quot;Sex&quot;                                                                                                                                        
-##  [5] &quot;Major&quot;                                                                                                                                      
-##  [6] &quot;Academic Year&quot;                                                                                                                              
-##  [7] &quot;Year you were born (YYYY)&quot;                                                                                                                  
-##  [8] &quot;Which musical instruments/talents do you play? (Select all that apply)&quot;                                                                     
-##  [9] &quot;Artist&quot;                                                                                                                                     
-## [10] &quot;Song&quot;                                                                                                                                       
-## [11] &quot;Link to song (on Youtube or Vimeo)&quot;</code></pre>
-<p>Cleaning data frame column names</p>
+<p>Cleaning data frame column names:</p>
 <pre class="r"><code>colnames(survey)[colnames(survey) == &quot;Timestamp&quot;] &lt;- &quot;time_submitted&quot;
 
 colnames(survey)[colnames(survey) == &quot;First, we are going to create a pseudonym for you to keep this survey anonymous (more or less). Which pseudonym generator would you prefer?&quot;] &lt;- &quot;pseudonym_generator&quot;
@@ -1716,10 +1702,9 @@ colnames(survey)</code></pre>
 ##  [4] &quot;sex&quot;                  &quot;academic_major&quot;       &quot;academic_level&quot;      
 ##  [7] &quot;year_born&quot;            &quot;instrument_list&quot;      &quot;favorite_song_artist&quot;
 ## [10] &quot;favorite_song&quot;        &quot;favorite_song_link&quot;</code></pre>
-<p>Levels:</p>
-<pre class="r"><code>levels(survey$birth_year)</code></pre>
-<pre><code>## Warning: Unknown or uninitialised column: 'birth_year'.</code></pre>
-<pre><code>## NULL</code></pre>
+<pre class="r"><code>Person &lt;- tibble(time_submitted = survey$time_submitted, pseudonym = survey$pseudonym, sex = survey$sex, academic_major = survey$academic_major, academic_level = survey$academic_level, year_born = survey$year_born)
+
+FavoriteSong &lt;- tibble(pseudonym = survey$pseudonym, artist = survey$favorite_song_artist, song = survey$favorite_song, link = survey$favorite_song_link)</code></pre>
 
 
 
