@@ -16,7 +16,7 @@ survey <- read_csv("https://raw.githubusercontent.com/introdsci/MusicSurvey/mast
 preferences <- read_csv("https://raw.githubusercontent.com/introdsci/MusicSurvey/master/preferences-survey.csv")
 ```
 
-Cleaning data frame column names:
+# Cleaning Variable Names
 ```{r}
 colnames(survey)[colnames(survey) == "Timestamp"] <- "time_submitted"
 
@@ -43,15 +43,31 @@ colnames(survey)[colnames(survey) == "Song"] <- "favorite_song"
 colnames(survey)
 ```
 
-
+# Creating Tables
 ```{r}
 Person <- tibble(time_submitted = survey$time_submitted, pseudonym = survey$pseudonym, sex = survey$sex, academic_major = survey$academic_major, academic_level = survey$academic_level, year_born = survey$year_born)
 
 FavoriteSong <- tibble(pseudonym = survey$pseudonym, artist = survey$favorite_song_artist, song = survey$favorite_song, link = survey$favorite_song_link)
 ```
 
-
+# Cleaning Data
 ```{r}
 Person$time_submitted <- as.POSIXlt(parse_datetime(Person$time_submitted, format="%m/%d/%y %H:%M"))
 ```
 
+
+Cleaning academic major's levels by making the letter cases more consistent:
+```{r}
+Person$academic_major <- as.factor(Person$academic_major)
+levels(Person$academic_major)[levels(Person$academic_major) == "Computer information systems"] <- "Computer Information Systems"
+
+levels(Person$academic_major)
+```
+
+# Create a 'Rating' Table
+Create a Ratings table using the R function gather()
+```{r}
+preferences$Timestamp <- NULL
+Rating <- gather(preferences,artist_song,rating,"40 crew\tNot Enough" :"Wheezer\tBuddy Holly")
+Rating <- tibble(pseudonym = Rating$`What was your pseudonym?`, artist_song = Rating$artist_song, rating = Rating$rating)
+```

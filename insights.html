@@ -1640,16 +1640,17 @@ summary {
 
 
 <pre class="r"><code>library(&quot;tidyverse&quot;)</code></pre>
-<pre><code>## ── Attaching packages ──────────────────────────────────────────────────────────── tidyverse 1.2.1 ──</code></pre>
+<pre><code>## ── Attaching packages ─────────────────────────────────────────────────────────────────── tidyverse 1.2.1 ──</code></pre>
 <pre><code>## ✔ ggplot2 3.2.1     ✔ purrr   0.3.2
 ## ✔ tibble  2.1.3     ✔ dplyr   0.8.3
 ## ✔ tidyr   1.0.0     ✔ stringr 1.4.0
 ## ✔ readr   1.3.1     ✔ forcats 0.4.0</code></pre>
-<pre><code>## ── Conflicts ─────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+<pre><code>## ── Conflicts ────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
 ## ✖ dplyr::filter() masks stats::filter()
 ## ✖ dplyr::lag()    masks stats::lag()</code></pre>
 <pre class="r"><code>library(&quot;dplyr&quot;)
 library(&quot;tidyr&quot;)
+library(&quot;readr&quot;)
 
 survey &lt;- read_csv(&quot;https://raw.githubusercontent.com/introdsci/MusicSurvey/master/music-survey.csv&quot;)</code></pre>
 <pre><code>## Parsed with column specification:
@@ -1674,7 +1675,8 @@ survey &lt;- read_csv(&quot;https://raw.githubusercontent.com/introdsci/MusicSur
 ##   `What was your pseudonym?` = col_character()
 ## )</code></pre>
 <pre><code>## See spec(...) for full column specifications.</code></pre>
-<p>Cleaning data frame column names:</p>
+<div id="cleaning-variable-names" class="section level1">
+<h1>Cleaning Variable Names</h1>
 <pre class="r"><code>colnames(survey)[colnames(survey) == &quot;Timestamp&quot;] &lt;- &quot;time_submitted&quot;
 
 colnames(survey)[colnames(survey) == &quot;First, we are going to create a pseudonym for you to keep this survey anonymous (more or less). Which pseudonym generator would you prefer?&quot;] &lt;- &quot;pseudonym_generator&quot;
@@ -1702,9 +1704,31 @@ colnames(survey)</code></pre>
 ##  [4] &quot;sex&quot;                  &quot;academic_major&quot;       &quot;academic_level&quot;      
 ##  [7] &quot;year_born&quot;            &quot;instrument_list&quot;      &quot;favorite_song_artist&quot;
 ## [10] &quot;favorite_song&quot;        &quot;favorite_song_link&quot;</code></pre>
+</div>
+<div id="creating-tables" class="section level1">
+<h1>Creating Tables</h1>
 <pre class="r"><code>Person &lt;- tibble(time_submitted = survey$time_submitted, pseudonym = survey$pseudonym, sex = survey$sex, academic_major = survey$academic_major, academic_level = survey$academic_level, year_born = survey$year_born)
 
 FavoriteSong &lt;- tibble(pseudonym = survey$pseudonym, artist = survey$favorite_song_artist, song = survey$favorite_song, link = survey$favorite_song_link)</code></pre>
+</div>
+<div id="cleaning-data" class="section level1">
+<h1>Cleaning Data</h1>
+<pre class="r"><code>Person$time_submitted &lt;- as.POSIXlt(parse_datetime(Person$time_submitted, format=&quot;%m/%d/%y %H:%M&quot;))</code></pre>
+<p>Cleaning academic major’s levels by making the letter cases more consistent:</p>
+<pre class="r"><code>Person$academic_major &lt;- as.factor(Person$academic_major)
+levels(Person$academic_major)[levels(Person$academic_major) == &quot;Computer information systems&quot;] &lt;- &quot;Computer Information Systems&quot;
+
+levels(Person$academic_major)</code></pre>
+<pre><code>## [1] &quot;Computer Engineering&quot;         &quot;Computer Information Systems&quot;
+## [3] &quot;Computer Science&quot;             &quot;Math&quot;</code></pre>
+</div>
+<div id="create-a-rating-table" class="section level1">
+<h1>Create a ‘Rating’ Table</h1>
+<p>Create a Ratings table using the R function gather()</p>
+<pre class="r"><code>preferences$Timestamp &lt;- NULL
+Rating &lt;- gather(preferences,artist_song,rating,&quot;40 crew\tNot Enough&quot; :&quot;Wheezer\tBuddy Holly&quot;)
+Rating &lt;- tibble(pseudonym = Rating$`What was your pseudonym?`, artist_song = Rating$artist_song, rating = Rating$rating)</code></pre>
+</div>
 
 
 
